@@ -147,6 +147,9 @@ cython_debug/
 # PyCharm
 .idea/
 
+# vscode
+.vscode/
+
 /out
 /lightning_logs
 /saved_models
