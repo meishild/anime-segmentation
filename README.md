@@ -19,6 +19,8 @@ Models can be downloaded [here](https://huggingface.co/skytnt/anime-seg)
 
 You need to [install pytorch](https://pytorch.org/) first
 
+If you need use GPU then `pip install torch==2.0.0+cu118 torchvision==0.15.0+cu118 -f https://mirror.sjtu.edu.cn/pytorch-wheels/torch_stable.html -i https://mirrors.bfsu.edu.cn/pypi/web/simple`
+
 Then `pip install -r requirements.txt`
 
 ## Train
@@ -84,6 +86,23 @@ arguments:
 ## Inference
 
 `python inference.py --net isnet_is --ckpt path/to/isnet_is.ckpt --data-dir path/to/input_data --out out --img-size 1024 --only-matted`
+```
+usage: inference.py [-h] [--net {isnet_is,isnet,u2net,u2netl,modnet}] [--ckpt CKPT]
+                    [--data DATA] [--out OUT] [--img-size IMG_SIZE] [--device DEVICE]                    [--fp32] [--only-matted]
+
+options:
+  -h, --help            show this help message and exit
+  --net {isnet_is,isnet,u2net,u2netl,modnet}
+                        net name
+  --ckpt CKPT           model checkpoint path
+  --data DATA           input data dir
+  --out OUT             output dir
+  --img-size IMG_SIZE   hyperparameter, input image size of the net
+  --device DEVICE       cpu or cuda:0
+  --fp32                disable mix precision
+  --only-matted         only output matted image
+```
+
 
 ## Export model
 

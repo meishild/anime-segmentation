@@ -54,6 +54,9 @@ if __name__ == "__main__":
                         help='disable mix precision')
     parser.add_argument('--only-matted', action='store_true', default=False,
                         help='only output matted image')
+    parser.add_argument('--keep-name', action='store_true', default=False,
+                        help='keep from image name')
+
 
     opt = parser.parse_args()
     print(opt)
@@ -68,13 +71,21 @@ if __name__ == "__main__":
         os.mkdir(opt.out)
 
     for i, path in enumerate(tqdm(sorted(glob.glob(f"{opt.data}/*.*")))):
+        import imghdr, os
+        if imghdr.what(path) is None:
+            continue
         img = cv2.cvtColor(cv2.imread(path, cv2.IMREAD_COLOR), cv2.COLOR_BGR2RGB)
         mask = get_mask(model, img, use_amp=not opt.fp32, s=opt.img_size)
+        if opt.keep_name:
+            img_path = f"{opt.out}/%s" % os.path.basename(path).split(".")[0]
+        else:
+            img_path = f"{opt.out}/{i:06d}"
+
         if opt.only_matted:
             img = np.concatenate((mask * img + 1 - mask, mask * 255), axis=2).astype(np.uint8)
             img = cv2.cvtColor(img, cv2.COLOR_RGBA2BGRA)
-            cv2.imwrite(f'{opt.out}/{i:06d}.png', img)
+            cv2.imwrite(f'{img_path}.png', img)
         else:
             img = np.concatenate((img, mask * img, mask.repeat(3, 2) * 255), axis=1).astype(np.uint8)
             img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-            cv2.imwrite(f'{opt.out}/{i:06d}.jpg', img)
+            cv2.imwrite(f'{img_path}.jpg', img)
